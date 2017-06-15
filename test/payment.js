@@ -1,8 +1,11 @@
-var express = require('../config/express')();
-var request = require('supertest')(express);
+const express = require('../config/express')();
+const request = require('supertest')(express);
+const assert = require('better-assert');
+
 
 describe('#Produtos Controller', function () {
 
+  let payment_create = {};
   beforeEach(function (done) {
     var conn = express.infra.connectionFactory();
     conn.query('delete from payment', function (ex, result) {
@@ -10,6 +13,14 @@ describe('#Produtos Controller', function () {
         done();
       }
     });
+
+    payment_create = {
+      forma_de_pagamento: 'payfast',
+      valor: '20.87',
+      moeda: 'BRL',
+      descricao: 'descrição do pagamentinho'
+    };
+
   });
 
   it('#List payments', function (done) {
@@ -19,29 +30,31 @@ describe('#Produtos Controller', function () {
       .expect(200, done);
   });
 
-  it('#Create new payment', function (done) {
-    const payment_create = {
-      forma_de_pagamento: 'payfast',
-      valor: '20.87',
-      moeda: 'BRL',
-      descricao: 'descrição do pagamentinho'
-    };
+  describe('#Create payment validation', function () {
+    it('#Create new payment', function (done) {
+      request.post('/payments/payment')
+        .send(payment_create)
+        .set('Accept', 'application/json')
+        .expect('Content-type', /json/)
+        .expect(201, done);
+    });
 
-    request.post('/payments/payment')
-      .send(payment_create)
-      .set('Accept', 'application/json')
-      .expect('Content-type', /json/)
-      .expect(201, done);
+    it('#Create new payment empty "forma de pagamento"', function (done) {
+      payment_create.forma_de_pagamento = '';
+      request.post('/payments/payment')
+        .send(payment_create)
+        .set('Accept', 'application/json')
+        .expect('Content-type', /json/)
+        .expect(400)
+        .then(response => {
+          const isTrue = response.body[0].msg === 'Forma de pagamento é obrigatória';
+          assert(isTrue);
+        })
+        .then(done);
+    });
   });
 
   it('#Create new payment to confirm', function (done) {
-    const payment_create = {
-      forma_de_pagamento: 'payfast',
-      valor: '20.87',
-      moeda: 'BRL',
-      descricao: 'descrição do pagamentinho'
-    };
-
     request.post('/payments/payment')
       .send(payment_create)
       .set('Accept', 'application/json')
@@ -58,13 +71,6 @@ describe('#Produtos Controller', function () {
   });
 
   it('#Create new payment to cancel', function (done) {
-    const payment_create = {
-      forma_de_pagamento: 'payfast',
-      valor: '20.87',
-      moeda: 'BRL',
-      descricao: 'descrição do pagamentinho'
-    };
-
     request.post('/payments/payment')
       .send(payment_create)
       .set('Accept', 'application/json')

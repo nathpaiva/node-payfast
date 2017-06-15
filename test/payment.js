@@ -3,7 +3,7 @@ const request = require('supertest')(express);
 const assert = require('better-assert');
 
 
-describe('#Produtos Controller', () => {
+describe('#Payment Controller', () => {
 
   let payment_create = {};
   beforeEach((done) => {

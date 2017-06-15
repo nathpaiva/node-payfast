@@ -22,11 +22,11 @@ describe('#Produtos Controller', function () {
         descricao: 'descrição do pagamentinho'
       },
       card: {
-        brand: "visa",
+        bandeira: "visa",
         cvv: 123,
-        card_number: 4444222211113333,
-        month_expiration: 12,
-        year_expiration: 2028
+        numero: 4444222211113333,
+        mes_de_expiracao: 12,
+        ano_de_expiracao: 2028
       }
     };
   });
@@ -114,13 +114,7 @@ describe('#Produtos Controller', function () {
         .send(payment_create)
         .set('Accept', 'application/json')
         .expect('Content-type', /json/)
-        .expect(201, done)
-      // .then(response => {
-      //   console.log(response.body);
-      //   // const isTrue = response.body[0].msg === 'Moeda é obrigatória e deve ter três caracteres';
-      //   // assert(isTrue);
-      // })
-      // .then(done);
+        .expect(201, done);
     });
   });
 

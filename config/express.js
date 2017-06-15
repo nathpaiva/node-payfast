@@ -16,6 +16,7 @@ module.exports = () => {
   consign
     .include('controllers')
     .then('infra')
+    .then('services')
     .into(app);
 
   return app;

@@ -22,7 +22,7 @@ Payments = app => {
 
   app.delete('/payments/payment/:id', (req, res) => {
     var payment = {};
-    var id = req.params.id;
+    const id = req.params.id;
 
     payment.status = 'CANCELADO';
     payment.id = id;

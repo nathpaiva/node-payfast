@@ -1,4 +1,4 @@
-const app = require('./config/custom-express')();
+const app = require('./config/express')();
 // const app = express();
 
 app.listen(3000, () => {

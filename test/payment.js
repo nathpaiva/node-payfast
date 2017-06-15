@@ -20,6 +20,13 @@ describe('#Produtos Controller', function () {
         valor: 20.87,
         moeda: 'BRL',
         descricao: 'descrição do pagamentinho'
+      },
+      card: {
+        brand: "visa",
+        cvv: 123,
+        card_number: 4444222211113333,
+        month_expiration: 12,
+        year_expiration: 2028
       }
     };
   });
@@ -107,7 +114,13 @@ describe('#Produtos Controller', function () {
         .send(payment_create)
         .set('Accept', 'application/json')
         .expect('Content-type', /json/)
-        .expect(201, done);
+        .expect(201, done)
+      // .then(response => {
+      //   console.log(response.body);
+      //   // const isTrue = response.body[0].msg === 'Moeda é obrigatória e deve ter três caracteres';
+      //   // assert(isTrue);
+      // })
+      // .then(done);
     });
   });
 

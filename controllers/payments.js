@@ -67,6 +67,10 @@ Payments = app => {
 
     const errors = req.validationErrors();
 
+    if (payment.forma_de_pagamento === 'card') {
+      res.status(201).json(req.body.card);
+      return;
+    }
 
     if (errors) {
       // console.log('Erro de validação encontrado');

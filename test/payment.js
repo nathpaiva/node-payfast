@@ -30,14 +30,6 @@ describe('#Produtos Controller', function () {
   });
 
   describe('#Create payment validation', function () {
-    it('#Create new payment', function (done) {
-      request.post('/payments/payment')
-        .send(payment_create)
-        .set('Accept', 'application/json')
-        .expect('Content-type', /json/)
-        .expect(201, done);
-    });
-
     it('#Create new payment empty "forma de pagamento"', function (done) {
       payment_create.forma_de_pagamento = '';
       request.post('/payments/payment')
@@ -92,6 +84,14 @@ describe('#Produtos Controller', function () {
           assert(isTrue);
         })
         .then(done);
+    });
+
+    it('#Create new payment', function (done) {
+      request.post('/payments/payment')
+        .send(payment_create)
+        .set('Accept', 'application/json')
+        .expect('Content-type', /json/)
+        .expect(201, done);
     });
   });
 

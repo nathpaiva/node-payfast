@@ -15,7 +15,7 @@ Payments = app => {
         return;
       }
 
-      console.log('Pagamentos carregados com sucesso');
+      // console.log('Pagamentos carregados com sucesso');
       res.status(200).send(result);
     });
   });
@@ -34,7 +34,7 @@ Payments = app => {
         res.status(500).json(payment);
         return;
       }
-      console.log('pagamento cancelado');
+      // console.log('pagamento cancelado');
       res.status(204).json(payment);
     });
   });
@@ -53,7 +53,7 @@ Payments = app => {
         res.status(500).json(payment);
         return;
       }
-      console.log('pagamento confirmado');
+      // console.log('pagamento confirmado');
       res.status(200).json(payment);
     });
   });
@@ -69,7 +69,7 @@ Payments = app => {
 
 
     if (errors) {
-      console.log('Erro de validação encontrado');
+      // console.log('Erro de validação encontrado');
       res.status(400).send(errors);
       return;
     }
@@ -85,7 +85,7 @@ Payments = app => {
         return;
       }
 
-      console.log('pagamento criado');
+      // console.log('pagamento criado');
       payment.id = result.insertId;
 
       resultPayment = {

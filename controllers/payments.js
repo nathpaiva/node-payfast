@@ -78,6 +78,10 @@ Payments = app => {
       const clientCards = new app.services.clientCards();
 
       clientCards.authorize(card, (error, reqq, ress, result) => {
+        if (error) {
+          res.status(400).json(result);
+          return;
+        }
         res.status(201).json(result);
         return;
       });

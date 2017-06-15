@@ -39,82 +39,272 @@ describe('#Produtos Controller', function () {
   });
 
   describe('#Create payment validation', function () {
-    it('#Create new payment empty "forma de pagamento"', function (done) {
-      payment_create.payment.forma_de_pagamento = '';
-      request.post('/payments/payment')
-        .send(payment_create)
-        .set('Accept', 'application/json')
-        .expect('Content-type', /json/)
-        .expect(400)
-        .then(response => {
-          const isTrue = response.body[0].msg === 'Forma de pagamento é obrigatória';
-          assert(isTrue);
-        })
-        .then(done);
+    describe('#Create payment payfast', function () {
+      it('#Create new payment empty "forma de pagamento"', function (done) {
+        payment_create.payment.forma_de_pagamento = '';
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Forma de pagamento é obrigatória';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment empty "valor"', function (done) {
+        payment_create.payment.valor = null;
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Valor é obrigatória e deve ser um decimal';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment with "moeda" more than 3 characters', function (done) {
+        payment_create.payment.moeda = 'BRLL';
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Moeda é obrigatória e deve ter três caracteres';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment empty "moeda"', function (done) {
+        payment_create.payment.moeda = '';
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Moeda é obrigatória e deve ter três caracteres';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment to payfast', function (done) {
+        payment_create.payment.forma_de_pagamento = 'payfast';
+
+        assert(payment_create.payment.forma_de_pagamento === 'payfast');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(201, done);
+      });
     });
+    describe('#Create payment card', function () {
+      it('#Create new payment with card', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
 
-    it('#Create new payment empty "valor"', function (done) {
-      payment_create.payment.valor = null;
-      request.post('/payments/payment')
-        .send(payment_create)
-        .set('Accept', 'application/json')
-        .expect('Content-type', /json/)
-        .expect(400)
-        .then(response => {
-          const isTrue = response.body[0].msg === 'Valor é obrigatória e deve ser um decimal';
-          assert(isTrue);
-        })
-        .then(done);
-    });
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(201, done);
+      });
 
-    it('#Create new payment with "moeda" more than 3 characters', function (done) {
-      payment_create.payment.moeda = 'BRLL';
-      request.post('/payments/payment')
-        .send(payment_create)
-        .set('Accept', 'application/json')
-        .expect('Content-type', /json/)
-        .expect(400)
-        .then(response => {
-          const isTrue = response.body[0].msg === 'Moeda é obrigatória e deve ter três caracteres';
-          assert(isTrue);
-        })
-        .then(done);
-    });
+      it('#Create new payment with card: wrong "número"', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.numero = 1234;
 
-    it('#Create new payment empty "moeda"', function (done) {
-      payment_create.payment.moeda = '';
-      request.post('/payments/payment')
-        .send(payment_create)
-        .set('Accept', 'application/json')
-        .expect('Content-type', /json/)
-        .expect(400)
-        .then(response => {
-          const isTrue = response.body[0].msg === 'Moeda é obrigatória e deve ter três caracteres';
-          assert(isTrue);
-        })
-        .then(done);
-    });
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Número é obrigatório e deve ter 16 caracteres.';
+            assert(isTrue);
+          })
+          .then(done);
+      });
 
-    it('#Create new payment to payfast', function (done) {
-      payment_create.payment.forma_de_pagamento = 'payfast';
+      it('#Create new payment with card: wrong "bandeira"', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.bandeira = '';
 
-      assert(payment_create.payment.forma_de_pagamento === 'payfast');
-      request.post('/payments/payment')
-        .send(payment_create)
-        .set('Accept', 'application/json')
-        .expect('Content-type', /json/)
-        .expect(201, done);
-    });
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Bandeira do cartão é obrigatória.';
+            assert(isTrue);
+          })
+          .then(done);
+      });
 
-    it('#Create new payment to card', function (done) {
-      payment_create.payment.forma_de_pagamento = 'card';
+      it('#Create new payment with card: wrong "ano_de_expiracao" empyt', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.ano_de_expiracao = null;
 
-      assert(payment_create.payment.forma_de_pagamento === 'card');
-      request.post('/payments/payment')
-        .send(payment_create)
-        .set('Accept', 'application/json')
-        .expect('Content-type', /json/)
-        .expect(201, done);
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Ano de expiração é obrigatório e deve ter 4 caracteres.';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment with card: wrong "ano_de_expiracao" less than 4 digits', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.ano_de_expiracao = 12;
+
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Ano de expiração é obrigatório e deve ter 4 caracteres.';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment with card: wrong "ano_de_expiracao" more than 4 digits', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.ano_de_expiracao = 12123;
+
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Ano de expiração é obrigatório e deve ter 4 caracteres.';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment with card: wrong "mes_de_expiracao" empty', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.mes_de_expiracao = null;
+
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Mês de expiração é obrigatório e deve ter 2 caracteres';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment with card: wrong "mes_de_expiracao" less than 2 digits', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.mes_de_expiracao = 1;
+
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Mês de expiração é obrigatório e deve ter 2 caracteres';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment with card: wrong "mes_de_expiracao" more than 2 digits', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.mes_de_expiracao = 123;
+
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'Mês de expiração é obrigatório e deve ter 2 caracteres';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment with card: wrong "cvv" empty', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.cvv = null;
+
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'CVV é obrigatório e deve ter 3 caracteres';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment with card: wrong "cvv" less than 3 digits', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.cvv = 12;
+
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'CVV é obrigatório e deve ter 3 caracteres';
+            assert(isTrue);
+          })
+          .then(done);
+      });
+
+      it('#Create new payment with card: wrong "cvv" more than 3 digits', function (done) {
+        payment_create.payment.forma_de_pagamento = 'card';
+        payment_create.card.cvv = 1223;
+
+        assert(payment_create.payment.forma_de_pagamento === 'card');
+        request.post('/payments/payment')
+          .send(payment_create)
+          .set('Accept', 'application/json')
+          .expect('Content-type', /json/)
+          .expect(400)
+          .then(response => {
+            const isTrue = response.body[0].msg === 'CVV é obrigatório e deve ter 3 caracteres';
+            assert(isTrue);
+          })
+          .then(done);
+      });
     });
   });
 

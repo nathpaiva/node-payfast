@@ -52,6 +52,48 @@ describe('#Produtos Controller', function () {
         })
         .then(done);
     });
+
+    it('#Create new payment empty "valor"', function (done) {
+      payment_create.valor = '';
+      request.post('/payments/payment')
+        .send(payment_create)
+        .set('Accept', 'application/json')
+        .expect('Content-type', /json/)
+        .expect(400)
+        .then(response => {
+          const isTrue = response.body[0].msg === 'Valor é obrigatória e deve ser um decimal';
+          assert(isTrue);
+        })
+        .then(done);
+    });
+
+    it('#Create new payment with "moeda" more than 3 characters', function (done) {
+      payment_create.moeda = 'BRLL';
+      request.post('/payments/payment')
+        .send(payment_create)
+        .set('Accept', 'application/json')
+        .expect('Content-type', /json/)
+        .expect(400)
+        .then(response => {
+          const isTrue = response.body[0].msg === 'Moeda é obrigatória e deve ter três caracteres';
+          assert(isTrue);
+        })
+        .then(done);
+    });
+
+    it('#Create new payment empty "moeda"', function (done) {
+      payment_create.moeda = '';
+      request.post('/payments/payment')
+        .send(payment_create)
+        .set('Accept', 'application/json')
+        .expect('Content-type', /json/)
+        .expect(400)
+        .then(response => {
+          const isTrue = response.body[0].msg === 'Moeda é obrigatória e deve ter três caracteres';
+          assert(isTrue);
+        })
+        .then(done);
+    });
   });
 
   it('#Create new payment to confirm', function (done) {

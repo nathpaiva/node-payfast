@@ -3,12 +3,12 @@ const request = require('supertest')(express);
 const assert = require('better-assert');
 
 
-describe('#Produtos Controller', function () {
+describe('#Produtos Controller', () => {
 
   let payment_create = {};
-  beforeEach(function (done) {
+  beforeEach((done) => {
     var conn = express.infra.connectionFactory();
-    conn.query('delete from payment', function (ex, result) {
+    conn.query('delete from payment', (ex, result) => {
       if (!ex) {
         done();
       }
@@ -31,16 +31,16 @@ describe('#Produtos Controller', function () {
     };
   });
 
-  it('#List payments', function (done) {
+  it('#List payments', (done) => {
     request.get('/payments/payment')
       .set('Accept', 'application/json')
       .expect('Content-type', /json/)
       .expect(200, done);
   });
 
-  describe('#Create payment validation', function () {
-    describe('#Create payment payfast', function () {
-      it('#Create new payment empty "forma de pagamento"', function (done) {
+  describe('#Create payment validation', () => {
+    describe('#Create payment payfast', () => {
+      it('#Create new payment empty "forma de pagamento"', (done) => {
         payment_create.payment.forma_de_pagamento = '';
         request.post('/payments/payment')
           .send(payment_create)
@@ -54,7 +54,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment empty "valor"', function (done) {
+      it('#Create new payment empty "valor"', (done) => {
         payment_create.payment.valor = null;
         request.post('/payments/payment')
           .send(payment_create)
@@ -68,7 +68,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with "moeda" more than 3 characters', function (done) {
+      it('#Create new payment with "moeda" more than 3 characters', (done) => {
         payment_create.payment.moeda = 'BRLL';
         request.post('/payments/payment')
           .send(payment_create)
@@ -82,7 +82,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment empty "moeda"', function (done) {
+      it('#Create new payment empty "moeda"', (done) => {
         payment_create.payment.moeda = '';
         request.post('/payments/payment')
           .send(payment_create)
@@ -96,7 +96,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment to payfast', function (done) {
+      it('#Create new payment to payfast', (done) => {
         payment_create.payment.forma_de_pagamento = 'payfast';
 
         assert(payment_create.payment.forma_de_pagamento === 'payfast');
@@ -107,8 +107,8 @@ describe('#Produtos Controller', function () {
           .expect(201, done);
       });
     });
-    describe('#Create payment card', function () {
-      it('#Create new payment with card', function (done) {
+    describe('#Create payment card', () => {
+      it('#Create new payment with card', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
 
         assert(payment_create.payment.forma_de_pagamento === 'card');
@@ -119,7 +119,7 @@ describe('#Produtos Controller', function () {
           .expect(201, done);
       });
 
-      it('#Create new payment with card: wrong "número"', function (done) {
+      it('#Create new payment with card: wrong "número"', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.numero = 1234;
 
@@ -136,7 +136,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with card: wrong "bandeira"', function (done) {
+      it('#Create new payment with card: wrong "bandeira"', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.bandeira = '';
 
@@ -153,7 +153,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with card: wrong "ano_de_expiracao" empyt', function (done) {
+      it('#Create new payment with card: wrong "ano_de_expiracao" empyt', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.ano_de_expiracao = null;
 
@@ -170,7 +170,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with card: wrong "ano_de_expiracao" less than 4 digits', function (done) {
+      it('#Create new payment with card: wrong "ano_de_expiracao" less than 4 digits', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.ano_de_expiracao = 12;
 
@@ -187,7 +187,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with card: wrong "ano_de_expiracao" more than 4 digits', function (done) {
+      it('#Create new payment with card: wrong "ano_de_expiracao" more than 4 digits', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.ano_de_expiracao = 12123;
 
@@ -204,7 +204,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with card: wrong "mes_de_expiracao" empty', function (done) {
+      it('#Create new payment with card: wrong "mes_de_expiracao" empty', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.mes_de_expiracao = null;
 
@@ -221,7 +221,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with card: wrong "mes_de_expiracao" less than 2 digits', function (done) {
+      it('#Create new payment with card: wrong "mes_de_expiracao" less than 2 digits', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.mes_de_expiracao = 1;
 
@@ -238,7 +238,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with card: wrong "mes_de_expiracao" more than 2 digits', function (done) {
+      it('#Create new payment with card: wrong "mes_de_expiracao" more than 2 digits', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.mes_de_expiracao = 123;
 
@@ -255,7 +255,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with card: wrong "cvv" empty', function (done) {
+      it('#Create new payment with card: wrong "cvv" empty', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.cvv = null;
 
@@ -272,7 +272,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with card: wrong "cvv" less than 3 digits', function (done) {
+      it('#Create new payment with card: wrong "cvv" less than 3 digits', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.cvv = 12;
 
@@ -289,7 +289,7 @@ describe('#Produtos Controller', function () {
           .then(done);
       });
 
-      it('#Create new payment with card: wrong "cvv" more than 3 digits', function (done) {
+      it('#Create new payment with card: wrong "cvv" more than 3 digits', (done) => {
         payment_create.payment.forma_de_pagamento = 'card';
         payment_create.card.cvv = 1223;
 
@@ -308,7 +308,7 @@ describe('#Produtos Controller', function () {
     });
   });
 
-  it('#Create new payment to confirm', function (done) {
+  it('#Create new payment to confirm', (done) => {
     request.post('/payments/payment')
       .send(payment_create)
       .set('Accept', 'application/json')
@@ -324,7 +324,7 @@ describe('#Produtos Controller', function () {
     }
   });
 
-  it('#Create new payment to cancel', function (done) {
+  it('#Create new payment to cancel', (done) => {
     request.post('/payments/payment')
       .send(payment_create)
       .set('Accept', 'application/json')

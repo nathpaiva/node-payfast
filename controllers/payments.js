@@ -6,6 +6,24 @@ Payments = app => {
     return new app.infra.PaymentDAO(connection);
   }
 
+  function _createResult(payment, card) {
+    return {
+      data: payment,
+      card: card || {},
+      links: [{
+          href: 'http://localhost:3000/payments/payment/' + payment.id,
+          method: 'PUT',
+          rel: 'confimar'
+        },
+        {
+          href: 'http://localhost:3000/payments/payment/' + payment.id,
+          method: 'DELETE',
+          rel: 'cancelar'
+        }
+      ]
+    }
+  }
+
   app.get('/payments/payment', (req, res) => {
     const paymentDao = _openConnection();
 
@@ -14,7 +32,6 @@ Payments = app => {
         res.status(500).json(result);
         return;
       }
-
       // console.log('Pagamentos carregados com sucesso');
       res.status(200).send(result);
     });
@@ -82,7 +99,8 @@ Payments = app => {
           res.status(400).json(result);
           return;
         }
-        res.status(201).json(result);
+
+        res.status(201).json(_createResult(payment, result));
         return;
       });
 
@@ -100,24 +118,8 @@ Payments = app => {
 
         // console.log('pagamento criado');
         payment.id = result.insertId;
-
-        resultPayment = {
-          data: payment,
-          links: [{
-              href: 'http://localhost:3000/payments/payment/' + payment.id,
-              method: 'PUT',
-              rel: 'confimar'
-            },
-            {
-              href: 'http://localhost:3000/payments/payment/' + payment.id,
-              method: 'DELETE',
-              rel: 'cancelar'
-            }
-          ]
-        }
-
         res.location('/payments/payment/' + payment.id);
-        res.status(201).json(resultPayment);
+        res.status(201).json(_createResult(payment));
       });
     }
   });

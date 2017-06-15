@@ -12,12 +12,8 @@ const _connectionMYSQL = () => {
   }
 
   if (process.env.NODE_ENV === 'test') {
-    config.database = 'alura_payment';
+    config.database = 'alura_payfast_test';
   }
-
-  console.log('====================================');
-  console.log(config);
-  console.log('====================================');
 
   // if (process.env.NODE_ENV === 'production') {   const urlDeConexao =
   // process.env.CLEARDB_DATABASE_URL;   //

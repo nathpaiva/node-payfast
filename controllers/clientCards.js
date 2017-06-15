@@ -1,10 +1,10 @@
-// const restify = require('restify');
+const restify = require('restify');
 
-// const client = restify.createJsonClient({
-//   url: 'http://localhost:3001'
-// });
+const client = restify.createJsonClient({
+  url: 'http://localhost:3001'
+});
 
-// client.post('/cartoes/autoriza', (error, req, res, result) => {
-//   console.log('consumindo serviço de cartões');
-//   console.log(result);
-// });
+client.post('/cartoes/autoriza', (error, req, res, result) => {
+  console.log('consumindo serviço de cartões');
+  console.log(result);
+});

@@ -15,10 +15,12 @@ describe('#Produtos Controller', function () {
     });
 
     payment_create = {
-      forma_de_pagamento: 'payfast',
-      valor: '20.87',
-      moeda: 'BRL',
-      descricao: 'descrição do pagamentinho'
+      payment: {
+        forma_de_pagamento: 'payfast',
+        valor: 20.87,
+        moeda: 'BRL',
+        descricao: 'descrição do pagamentinho'
+      }
     };
   });
 
@@ -31,7 +33,7 @@ describe('#Produtos Controller', function () {
 
   describe('#Create payment validation', function () {
     it('#Create new payment empty "forma de pagamento"', function (done) {
-      payment_create.forma_de_pagamento = '';
+      payment_create.payment.forma_de_pagamento = '';
       request.post('/payments/payment')
         .send(payment_create)
         .set('Accept', 'application/json')
@@ -45,7 +47,7 @@ describe('#Produtos Controller', function () {
     });
 
     it('#Create new payment empty "valor"', function (done) {
-      payment_create.valor = '';
+      payment_create.payment.valor = null;
       request.post('/payments/payment')
         .send(payment_create)
         .set('Accept', 'application/json')
@@ -59,7 +61,7 @@ describe('#Produtos Controller', function () {
     });
 
     it('#Create new payment with "moeda" more than 3 characters', function (done) {
-      payment_create.moeda = 'BRLL';
+      payment_create.payment.moeda = 'BRLL';
       request.post('/payments/payment')
         .send(payment_create)
         .set('Accept', 'application/json')
@@ -73,7 +75,7 @@ describe('#Produtos Controller', function () {
     });
 
     it('#Create new payment empty "moeda"', function (done) {
-      payment_create.moeda = '';
+      payment_create.payment.moeda = '';
       request.post('/payments/payment')
         .send(payment_create)
         .set('Accept', 'application/json')
@@ -86,7 +88,21 @@ describe('#Produtos Controller', function () {
         .then(done);
     });
 
-    it('#Create new payment', function (done) {
+    it('#Create new payment to payfast', function (done) {
+      payment_create.payment.forma_de_pagamento = 'payfast';
+
+      assert(payment_create.payment.forma_de_pagamento === 'payfast');
+      request.post('/payments/payment')
+        .send(payment_create)
+        .set('Accept', 'application/json')
+        .expect('Content-type', /json/)
+        .expect(201, done);
+    });
+
+    it('#Create new payment to card', function (done) {
+      payment_create.payment.forma_de_pagamento = 'card';
+
+      assert(payment_create.payment.forma_de_pagamento === 'card');
       request.post('/payments/payment')
         .send(payment_create)
         .set('Accept', 'application/json')

@@ -59,11 +59,11 @@ Payments = app => {
   });
 
   app.post('/payments/payment', (req, res) => {
-    var payment = req.body;
+    var payment = req.body.payment;
 
-    req.assert('forma_de_pagamento', 'Forma de pagamento é obrigatória').notEmpty();
-    req.assert('valor', 'Valor é obrigatória e deve ser um decimal').notEmpty().isFloat();
-    req.assert('moeda', 'Moeda é obrigatória e deve ter três caracteres').notEmpty().len(3, 3);
+    req.assert('payment.forma_de_pagamento', 'Forma de pagamento é obrigatória').notEmpty();
+    req.assert('payment.valor', 'Valor é obrigatória e deve ser um decimal').notEmpty().isFloat();
+    req.assert('payment.moeda', 'Moeda é obrigatória e deve ter três caracteres').notEmpty().len(3, 3);
 
     const errors = req.validationErrors();
 

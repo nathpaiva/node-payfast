@@ -20,7 +20,6 @@ describe('#Produtos Controller', function () {
       moeda: 'BRL',
       descricao: 'descrição do pagamentinho'
     };
-
   });
 
   it('#List payments', function (done) {

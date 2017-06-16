@@ -3,7 +3,10 @@ Payments = app => {
   function _openConnection() {
     const connection = app.infra.connectionFactory();
 
-    return new app.infra.PaymentDAO(connection);
+    return {
+      connection: connection,
+      DAO: new app.infra.PaymentDAO(connection)
+    }
   }
 
   function _createResult(payment, card) {
@@ -25,7 +28,8 @@ Payments = app => {
   }
 
   app.get('/payments/payment', (req, res) => {
-    const paymentDao = _openConnection();
+    const openConnection = _openConnection();
+    const paymentDao = openConnection.DAO;
 
     paymentDao.lista((error, result) => {
       if (error) {
@@ -35,6 +39,8 @@ Payments = app => {
       // console.log('Pagamentos carregados com sucesso');
       res.status(200).send(result);
     });
+
+    openConnection.connection.end();
   });
 
   app.delete('/payments/payment/:id', (req, res) => {
@@ -44,7 +50,8 @@ Payments = app => {
     payment.status = 'CANCELADO';
     payment.id = id;
 
-    const paymentDao = _openConnection();
+    const openConnection = _openConnection();
+    const paymentDao = openConnection.DAO;
 
     paymentDao.atualiza(payment, (error, resuslt) => {
       if (error) {
@@ -54,6 +61,7 @@ Payments = app => {
       // console.log('pagamento cancelado');
       res.status(204).json(payment);
     });
+    openConnection.connection.end();
   });
 
   app.put('/payments/payment/:id', (req, res) => {
@@ -63,7 +71,8 @@ Payments = app => {
     payment.status = 'CONFIRMADO';
     payment.id = id;
 
-    const paymentDao = _openConnection();
+    const openConnection = _openConnection();
+    const paymentDao = openConnection.DAO;
 
     paymentDao.atualiza(payment, (error, resuslt) => {
       if (error) {
@@ -73,6 +82,7 @@ Payments = app => {
       // console.log('pagamento confirmado');
       res.status(200).json(payment);
     });
+    openConnection.connection.end();
   });
 
   app.post('/payments/payment', (req, res) => {
@@ -105,7 +115,8 @@ Payments = app => {
       });
 
     } else {
-      const paymentDao = _openConnection();
+      const openConnection = _openConnection();
+      const paymentDao = openConnection.DAO;
 
       payment.status = 'CRIADO';
       payment.data = new Date;
@@ -121,6 +132,8 @@ Payments = app => {
         res.location('/payments/payment/' + payment.id);
         res.status(201).json(_createResult(payment));
       });
+
+      openConnection.connection.end();
     }
   });
 

@@ -36,7 +36,7 @@ Payments = app => {
         res.status(500).json(result);
         return;
       }
-      // console.log('Pagamentos carregados com sucesso');
+      console.log('Pagamentos carregados com sucesso');
       res.status(200).send(result);
     });
 

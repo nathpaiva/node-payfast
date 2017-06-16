@@ -4,7 +4,7 @@ const _connectionMYSQL = () => {
   const config = {
     host: 'localhost',
     user: 'root',
-    password: ''
+    password: 'root'
   };
 
   if (!process.env.NODE_ENV) {
@@ -15,6 +15,11 @@ const _connectionMYSQL = () => {
     config.database = 'alura_payfast_test';
   }
 
+  if (process.env.NOD_ENV === 'test-pro') {
+    config.database = 'alura_payfast_test';
+    config.password = 'root';
+  }
+
   // if (process.env.NODE_ENV === 'production') {   const urlDeConexao =
   // process.env.CLEARDB_DATABASE_URL;   //
   // mysql://b0b1f27be5870f:9cd4b731@us-cdbr-iron-east-03.cleardb.net/heroku_c165e
@@ -22,7 +27,6 @@ const _connectionMYSQL = () => {
   // urlDeConexao.match(/mysql:\/\/(.*):(.*)@(.*)\/(.*)\?reconnect=true/);
   // config.host = grupos[3];   config.user = grupos[1];   config.password =
   // grupos[2];   config.database = grupos[4]; }
-
   return mysql.createConnection(config);
 }
 

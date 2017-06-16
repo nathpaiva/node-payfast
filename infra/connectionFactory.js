@@ -4,16 +4,22 @@ const _connectionMYSQL = () => {
   const config = {
     host: 'localhost',
     user: 'root',
-    password: 'root'
+    password: ''
   };
 
   if (!process.env.NODE_ENV) {
     config.database = 'alura_payfast';
   }
 
+  if (process.env.NOD_ENV === 'pro') {
+    config.database = 'alura_payfast';
+    config.password = 'root';
+  }
+
   if (process.env.NODE_ENV === 'test') {
     config.database = 'alura_payfast_test';
   }
+
 
   if (process.env.NOD_ENV === 'test-pro') {
     config.database = 'alura_payfast_test';

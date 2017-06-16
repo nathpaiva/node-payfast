@@ -37,7 +37,25 @@ Payments = app => {
         return;
       }
       console.log('Pagamentos carregados com sucesso');
-      res.status(200).send(result);
+      res.json(result);
+    });
+
+    openConnection.connection.end();
+  });
+
+  app.get('/payments/payment/:id', (req, res) => {
+    const id = req.params.id;
+
+    const openConnection = _openConnection();
+    const paymentDao = openConnection.DAO;
+
+    paymentDao.buscaPorId(id, (error, result) => {
+      if (error) {
+        res.status(500).json(result);
+        return;
+      }
+
+      res.json(result);
     });
 
     openConnection.connection.end();

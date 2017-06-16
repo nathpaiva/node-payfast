@@ -24,7 +24,7 @@ describe('#Correios Controller', () => {
         const isTrue = response.body.CalcPrazoResult.Servicos.cServico[0].Erro === '';
         assert(isTrue);
       })
-      .then(done);;
+      .then(done);
   });
 
   it('#Check delivery date erro "nCdServico" empty', (done) => {
@@ -34,12 +34,12 @@ describe('#Correios Controller', () => {
       .send(dataCorreios)
       .set('Accept', 'application/json')
       .expect('Content-type', /json/)
-      .expect(200)
+      .expect(400)
       .then(response => {
-        const isTrue = response.body.CalcPrazoResult.Servicos === null;
+        const isTrue = response.body[0].msg === 'É necessário enserir uma dada ta servico';
         assert(isTrue);
       })
-      .then(done);;;
+      .then(done);
   });
 
   it('#Check delivery date erro "sCepOrigem" empty', (done) => {
@@ -49,12 +49,12 @@ describe('#Correios Controller', () => {
       .send(dataCorreios)
       .set('Accept', 'application/json')
       .expect('Content-type', /json/)
-      .expect(200)
+      .expect(400)
       .then(response => {
-        const isTrue = response.body.CalcPrazoResult.Servicos.cServico[0].Erro !== '';
+        const isTrue = response.body[0].msg === 'É necessário enserir CEP de origem';
         assert(isTrue);
       })
-      .then(done);;;
+      .then(done);
   });
 
   it('#Check delivery date erro "sCepDestino" empty', (done) => {
@@ -64,11 +64,11 @@ describe('#Correios Controller', () => {
       .send(dataCorreios)
       .set('Accept', 'application/json')
       .expect('Content-type', /json/)
-      .expect(200)
+      .expect(400)
       .then(response => {
-        const isTrue = response.body.CalcPrazoResult.Servicos.cServico[0].Erro !== '';
+        const isTrue = response.body[0].msg === 'É necessário enserir CEP de destino';
         assert(isTrue);
       })
-      .then(done);;;
+      .then(done);
   });
 });

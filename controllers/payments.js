@@ -158,7 +158,7 @@ Payments = app => {
         payment.id = result.insertId;
         if (!req.body.getFromBase) {
           const cache = app.services.memcachedClient();
-          cache.set(`payment-${payment.id}`, result, 100000, function (err) {
+          cache.set(`payment-${payment.id}`, result, 60000, function (err) {
             console.log('nova chave: payment-' + payment.id);
           });
         }

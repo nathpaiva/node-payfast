@@ -38,7 +38,24 @@ describe('#Payment Controller', () => {
       .expect(200, done);
   });
 
-  it('#List id payment', (done) => {
+  it('#GET id payment FROM DATABASE', (done) => {
+    payment_create.getFromBase = true;
+    request.post('/payments/payment')
+      .send(payment_create)
+      .set('Accept', 'application/json')
+      .then(response => {
+        getPaymentById(response.body.data.id);
+      });
+
+    const getPaymentById = id => {
+      request.get(`/payments/payment/${id}`)
+        .set('Accept', 'application/json')
+        .expect('Content-type', /json/)
+        .expect(200, done);
+    }
+  });
+
+  it('#GET id payment FROM MEMCACHED', (done) => {
     request.post('/payments/payment')
       .send(payment_create)
       .set('Accept', 'application/json')

@@ -46,19 +46,30 @@ Payments = app => {
   app.get('/payments/payment/:id', (req, res) => {
     const id = req.params.id;
 
-    const openConnection = _openConnection();
-    const paymentDao = openConnection.DAO;
+    var cache = app.services.memcachedClient();
+    cache.get(`payment-${id}`, function (err, retorno) {
+      if (err || !retorno) {
+        const openConnection = _openConnection();
+        const paymentDao = openConnection.DAO;
 
-    paymentDao.buscaPorId(id, (error, result) => {
-      if (error) {
-        res.status(500).json(result);
-        return;
+        paymentDao.buscaPorId(id, (error, result) => {
+          if (error) {
+            res.status(500).json(result);
+            return;
+          }
+
+          res.json(result);
+        });
+
+        openConnection.connection.end();
+        console.log('MISS - chave nao encontrada');
+      } else {
+        console.log('HIT - valor: ' + JSON.stringify(retorno));
+        res.json(retorno);
       }
-
-      res.json(result);
     });
 
-    openConnection.connection.end();
+
   });
 
   app.delete('/payments/payment/:id', (req, res) => {
@@ -97,7 +108,6 @@ Payments = app => {
         res.status(500).json(payment);
         return;
       }
-      // console.log('pagamento confirmado');
       res.status(200).json(payment);
     });
     openConnection.connection.end();
@@ -145,8 +155,14 @@ Payments = app => {
           return;
         }
 
-        // console.log('pagamento criado');
         payment.id = result.insertId;
+        if (!req.body.getFromBase) {
+          const cache = app.services.memcachedClient();
+          cache.set(`payment-${payment.id}`, result, 100000, function (err) {
+            console.log('nova chave: payment-' + payment.id);
+          });
+        }
+
         res.location('/payments/payment/' + payment.id);
         res.status(201).json(_createResult(payment));
       });

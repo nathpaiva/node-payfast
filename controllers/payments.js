@@ -1,3 +1,5 @@
+const logger = require('../services/logger');
+
 Payments = app => {
 
   function _openConnection() {
@@ -36,7 +38,6 @@ Payments = app => {
         res.status(500).json(result);
         return;
       }
-      console.log('Pagamentos carregados com sucesso');
       res.json(result);
     });
 
@@ -47,6 +48,7 @@ Payments = app => {
     const id = req.params.id;
 
     var cache = app.services.memcachedClient();
+    logger.info(`Get do memcached payment-${id}`);
     cache.get(`payment-${id}`, function (err, retorno) {
       if (err || !retorno) {
         const openConnection = _openConnection();
@@ -54,6 +56,7 @@ Payments = app => {
 
         paymentDao.buscaPorId(id, (error, result) => {
           if (error) {
+            logger.info(`Erro de buscaa por payment-${id}`);
             res.status(500).json(result);
             return;
           }
@@ -62,9 +65,9 @@ Payments = app => {
         });
 
         openConnection.connection.end();
-        console.log('MISS - chave nao encontrada');
+        logger.info('MISS - chave nao encontrada');
       } else {
-        console.log('HIT - valor: ' + JSON.stringify(retorno));
+        logger.info(`HIT - valor:${JSON.stringify(retorno)}`)
         res.json(retorno);
       }
     });
@@ -131,9 +134,10 @@ Payments = app => {
     if (payment.forma_de_pagamento === 'card') {
       const card = req.body.card;
       const clientCards = new app.services.clientCards();
-
+      logger.info('Acessando serviço de cartão');
       clientCards.authorize(card, (error, reqq, ress, result) => {
         if (error) {
+          logger.info(`Erro ao acessar serviço de cartão ${JSON.stringify(result)}`);
           res.status(400).json(result);
           return;
         }
@@ -159,7 +163,7 @@ Payments = app => {
         if (!req.body.getFromBase) {
           const cache = app.services.memcachedClient();
           cache.set(`payment-${payment.id}`, result, 60000, function (err) {
-            console.log('nova chave: payment-' + payment.id);
+            logger.info(`nova chave: payment-${payment.id}`);
           });
         }
 

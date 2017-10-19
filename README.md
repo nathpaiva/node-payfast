@@ -1,34 +1,34 @@
 # node-pyfast
 
-Estudo de api em node
+Study node API
 
-## Projeto desenvolvido com:
+## Project developed with:
 * Node
 
-## Teste desenvolvido com:
+## Test developed with:
 * Mocha e Chai
 
-## Para rodar o projeto é preciso instalar:
+## To run the project you need to install:
 * [Node](https://nodejs.org/en/download/)
-* NPM (já instalado com o node)
+* NPM (already installed with node)
 
-### E clonar o repositório
+### And clone the repository
 ```sh
 $ git clone git@github.com:nathpaiva/node-payfast.git
 ```
 
-## Antes de dar start no projeto é preciso instalar as dependencias:
+## Before starting the project you must install the dependencies:
 ```sh
 $ npm install
 ```
 
-## Para dar start no projeto é preciso rodar o comando:
+## To start the project you must run the command:
 ```sh
 $ npm start
 ```
-* Esse comando da acesso a [http://localhost:3000](http://localhost:3000)
+* This command to access [http://localhost:3000](http://localhost:3000)
 
-## Caso queira rodar os testes
+## If you want to run the tests
 ```sh
 $ npm test
 ```
